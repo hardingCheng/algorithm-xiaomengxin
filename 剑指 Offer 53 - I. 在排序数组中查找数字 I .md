@@ -1,3 +1,27 @@
+![](https://output66.oss-cn-beijing.aliyuncs.com/img/20220218170140.png)
+
+## 解析
+
+### 方法 1 （暴力求解）
+
+```js
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function (nums, target) {
+  let count = 0;
+  nums.forEach((x) => {
+    if (x === target) count++;
+  });
+  return count;
+};
+```
+
+### 方法 2 (二分法)
+
+```js
 const search = (nums, target) => {
   // 定义上下限、找到的标志flag
   let [low, high, flag] = [0, nums.length - 1, null];
@@ -28,3 +52,4 @@ const search = (nums, target) => {
   // 返回计数
   return high - low + 1;
 };
+```
