@@ -75,57 +75,54 @@ function quickSort(arr, left, right) {
 ### 解法 3 （堆,不是很会）
 
 ```js
+/**
+ * @param {number[]} arr
+ * @param {number} k
+ * @return {number[]}
+ */
+// var getLeastNumbers = function(arr, k) {
+//     return arr.sort((a, b) => a - b).slice(0, k);
+// };
 var getLeastNumbers = function (arr, k) {
   let len = arr.length;
-  if (!len || !k) return [];
-  let heap = new Heap();
-  // 建立最小堆，O(N) 复杂度
-  heap.init(arr);
   let res = [];
-  while (k) {
-    // 依次从堆顶弹出最小元素，O(logN) 复杂度
-    res.push(heap.delete());
-    k--;
+  if (k === 0) return [];
+  if (k === len) return arr;
+  buildHeap(arr);
+  for (let i = 1; i <= k; i++) {
+    res.push(arr[0]);
+    swap(arr, 0, len - i);
+    heapAdjust(arr, 0, len - i);
   }
   return res;
 };
-
-function Heap() {
-  this.heap = [-Infinity];
-}
-Heap.prototype.init = function (arr) {
-  this.heap = [-Infinity];
-  this.heap.push(...arr);
-  let size = arr.length;
+var buildHeap = function (arr) {
+  let len = arr.length;
   // 从最后一个元素的父节点开始实现最小堆，类似删除操作中将最后一个元素放在堆顶进行调整。
-  for (let pos = parseInt(size / 2); pos > 0; pos--) {
-    let tmp = this.heap[pos];
-    let parent, child;
-    for (parent = pos; parent * 2 <= size; parent = child) {
-      child = parent * 2;
-      if (child + 1 <= size && this.heap[child + 1] < this.heap[child]) child++;
-      if (tmp < this.heap[child]) break;
-      else this.heap[parent] = this.heap[child];
-    }
-    this.heap[parent] = tmp;
+  for (let i = Math.floor(len / 2); i >= 0; i--) {
+    heapAdjust(arr, i, len);
   }
 };
-Heap.prototype.delete = function () {
-  let size = this.heap.length - 1;
-  let res = this.heap[1];
-  // 拿到最后一个元素
-  let tmp = this.heap[size];
-  this.heap.length--;
-  size--;
-  // 将最后一个元素放在堆顶，并调整最小堆
-  let parent, child;
-  for (parent = 1; parent * 2 <= size; parent = child) {
-    child = parent * 2;
-    if (child + 1 <= size && this.heap[child + 1] < this.heap[child]) child++;
-    if (tmp < this.heap[child]) break;
-    else this.heap[parent] = this.heap[child];
+var swap = function (arr, i, child) {
+  if (i === child) return;
+  let temp = arr[i];
+  arr[i] = arr[child];
+  arr[child] = temp;
+};
+var heapAdjust = function (arr, i, len) {
+  let child = i * 2 + 1;
+  // 看是否有孩子
+  while (child < len) {
+    if (child + 1 < len && arr[child] > arr[child + 1]) {
+      child = child + 1;
+    }
+    if (arr[i] > arr[child]) {
+      swap(arr, i, child);
+      i = child;
+      child = child * 2 + 1;
+    } else {
+      break;
+    }
   }
-  this.heap[parent] = tmp;
-  return res;
 };
 ```
