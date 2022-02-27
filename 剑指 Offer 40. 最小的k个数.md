@@ -126,3 +126,151 @@ var heapAdjust = function (arr, i, len) {
   }
 };
 ```
+
+```js
+// 默认最大堆
+const defaultCmp = (x, y) => x > y;
+// 交换元素
+const swap = (arr, i, j) => ([arr[i], arr[j]] = [arr[j], arr[i]]);
+// 堆类，默认最大堆
+class Heap {
+  constructor(cmp = defaultCmp) {
+    this.container = [];
+    this.cmp = cmp;
+  }
+  // 插入
+  insert(data) {
+    const { container, cmp } = this;
+    container.push(data);
+    let index = this.size() - 1;
+    while (index) {
+      let parent = (index - 1) >> 1;
+      if (!cmp(container[index], container[parent])) {
+        return;
+      }
+      swap(container, index, parent);
+      index = parent;
+    }
+  }
+  // 弹出堆顶，并返回
+  pop() {
+    const { container, cmp } = this;
+    if (!this.size()) {
+      return null;
+    }
+
+    swap(container, 0, this.size() - 1);
+    const res = container.pop();
+    const length = this.size();
+    let index = 0,
+      exchange = index * 2 + 1;
+
+    while (exchange < length) {
+      // // 以最大堆的情况来说：如果有右节点，并且右节点的值大于左节点的值
+      let right = index * 2 + 2;
+      if (right < length && cmp(container[right], container[exchange])) {
+        exchange = right;
+      }
+      if (!cmp(container[exchange], container[index])) {
+        break;
+      }
+      swap(container, exchange, index);
+      index = exchange;
+      exchange = index * 2 + 1;
+    }
+
+    return res;
+  }
+  // 获取堆大小
+  size() {
+    return this.container.length;
+  }
+  // 获取堆顶
+  peek() {
+    if (this.size()) return this.container[0];
+    return null;
+  }
+}
+
+const smallestK = (arr, k) => {
+  const minHeap = new Heap((x, y) => x < y);
+  for (const num of arr) {
+    minHeap.insert(num);
+  }
+  const res = [];
+  for (let i = 0; i < k; i++) {
+    res.push(minHeap.pop());
+  }
+  return res;
+};
+```
+
+### 解法 4 （大顶堆,不是很会）
+
+```md
+题目要求求最小的 k 个数，且任意顺序输出这 k 个数，故很容易联想到使用大顶堆，即堆顶元素是 k 个数中最大的数；
+解题主要分为两步：建堆+删除堆顶元素 1.对 arr 前 k 个元素进行建堆操作，调用 insert 函数，函数的思想是将其放入到数组尾部，由底向上进行堆化，如果子节点的值大于父节点的值，则交换，直到满足堆的特性； 2.对 arr 的剩余元素，比较其与堆顶元素的大小关系，如果其值小于堆顶元素，则将其替换堆顶元素，并自顶向下进行堆化，如果父节点的值小于子节点的值，则交换，直到满足堆的特性； 3.处理完毕后，输出堆中[1...k]的元素。
+```
+
+```js
+/**
+ * @param {number[]} arr
+ * @param {number} k
+ * @return {number[]}
+ */
+var smallestK = function (arr, k) {
+  let heap = [0];
+  this.count = 0;
+  for (let i = 0; i < k; i++) {
+    insert(heap, arr[i], k);
+  }
+  for (let i = k; i < arr.length; i++) {
+    if (arr[i] < heap[1]) {
+      heap[1] = arr[i];
+      heapify(heap);
+    }
+  }
+  let res = [];
+  for (let i = 1; i <= k; i++) {
+    res.push(heap[i]);
+  }
+  return res;
+};
+
+function insert(heap, val, k) {
+  if (this.count >= k) {
+    return;
+  }
+  this.count++;
+  heap.push(val);
+  let i = count;
+  while (parseInt(i / 2) > 0 && heap[i] > heap[parseInt(i / 2)]) {
+    swap(heap, i, parseInt(i / 2));
+    i = parseInt(i / 2);
+  }
+}
+
+function heapify(heap) {
+  let i = 1;
+  while (true) {
+    let maxPos = i;
+    if (i * 2 <= this.count && heap[i] < heap[i * 2]) {
+      maxPos = i * 2;
+    }
+    if (i * 2 + 1 <= this.count && heap[maxPos] < heap[i * 2 + 1]) {
+      maxPos = i * 2 + 1;
+    }
+    if (maxPos === i) {
+      break;
+    }
+    swap(heap, i, maxPos);
+    i = maxPos;
+  }
+}
+
+function swap(heap, i, j) {
+  let temp = heap[i];
+  heap[i] = heap[j];
+  heap[j] = temp;
+}
+```
