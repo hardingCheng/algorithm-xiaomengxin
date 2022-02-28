@@ -1,26 +1,11 @@
-var getAllElements = function (root1, root2) {
-  let temp = [];
-  let root1Sort = [],
-    root2Sort = [];
-  getTreeInorder(root1, root1Sort);
-  getTreeInorder(root2, root2Sort);
-  let p1 = 0,
-    p2 = 0;
-  while (p1 < root1Sort.length || p2 < root2Sort.length) {
-    if (
-      p2 >= root2Sort.length ||
-      (p1 < root1Sort.length && root1Sort[p1] < root2Sort[p2])
-    ) {
-      temp.push(root1Sort[p1++]);
-    } else {
-      temp.push(root2Sort[p2++]);
-    }
-  }
-  return temp;
+var obj = {
+  name: "456",
+  getName: function () {
+    let printName = () => {
+      console.log(this.name);
+    };
+    printName();
+  },
 };
-var getTreeInorder = function (root1, array) {
-  if (!root) return;
-  getTreeInorder(root.left, array);
-  array.push(root.val);
-  getTreeInorder(root.right, array);
-};
+
+obj.getName();
