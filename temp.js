@@ -1,39 +1,33 @@
 /**
- * @param {number[]} nums
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
  * @return {number}
  */
-/* 
-一种最简单的思路是将数组排序后再找出最大间距，但传统的基于比较的排序算法（快速排序、归并排序等）均需要 O(N\log N)O(NlogN) 的时间复杂度。如果要将时间复杂度降到 O(N)O(N)，
-我们就必须使用其他的排序算法。例如，基数排序可以在 O(N)O(N) 的时间内完成整数之间的排序。
-
-*/
-var maximumGap = function (nums) {
-  // 用于记录下标和
-  var cnt = new Array(65536).fill(0);
-  // 临时数组
-  var temp = new Array(nums.length);
-  for (let i = 0; i < nums.length; i++) {
-    cnt[nums[i] & 0xffff] += 1;
-  }
-  // 求下标的前缀和
-  for (let i = 1; i < 65536; i++) cnt[i] += cnt[i - 1];
-  // 把数字按照记录的下标放入临时数组
-  for (let i = nums.length - 1; i >= 0; i--) {
-    temp[--cnt[nums[i] & 0xffff]] = nums[i];
-  }
-  // 重置
-  cnt = new Array(65536).fill(0);
-  // 下面是对2的16-32次方范围内的做一次基数排序
-  for (let i = 0; i < temp.length; i++) {
-    cnt[(temp[i] & 0xffff0000) >> 16] += 1;
-  }
-  for (let i = 1; i < 65536; i++) cnt[i] += cnt[i - 1];
-  for (let i = nums.length - 1; i >= 0; i--) {
-    nums[--cnt[(temp[i] & 0xffff0000) >> 16]] = temp[i];
-  }
-  let ans = 0;
-  for (let i = 1; i < nums.length; i++) {
-    ans = Math.max(ans, nums[i] - nums[i - 1]);
-  }
-  return ans;
+// 递归和深度搜索
+var longestUnivaluePath = function (root) {
+  let res = 0;
+  const dfs = (root) => {
+    if (root === null) return 0;
+    const left = dfs(root.left);
+    const right = dfs(root.right);
+    let leftPath = 0,
+      rightPath = 0;
+    if (root.left && root.left.val === root.val) {
+      leftPath += 1;
+    }
+    if (root.right && root.right.val === root.val) {
+      rightPath += 1;
+    }
+    res = Math.max(res, leftPath + rightPath);
+    return Math.max(leftPath, rightPath);
+  };
+  dfs(root);
+  return res;
 };
